@@ -1,2 +1,2 @@
 # auth
-Switchblade authorization micro-service using OAuth
+Switchblade authorization micro-service using OAuth2
