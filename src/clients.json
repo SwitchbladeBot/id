@@ -1,0 +1,18 @@
+[
+    {
+        "id": "G0YmTcloazaVWZHfDbOVrqovjMtfS64x",
+        "secret": "AGnsLIPSr3gLvjYlp5rpromuBpfWp1Hn",
+        "allowed_scopes": [
+            "music.playback",
+            "music.playlists_read",
+            "music.playlists_write"
+        ],
+        "name": "Google Assistant",
+        "image": "http://i.imgur.com/l33tg4y.jpg",
+        "verified": true,
+        "callback_uris": [
+            "https://localhost:8080/callback",
+            "switchbladeapp://callback"
+        ]
+    }
+]
