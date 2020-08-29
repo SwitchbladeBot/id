@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/SwitchbladeBot/id.git"
   },
-  "author": "",
+  "author": "Switchblade Team",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SwitchbladeBot/id/issues"
@@ -24,6 +24,11 @@
     "standard": "^14.3.4"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "aes256": "^1.0.4",
+    "axios": "^0.20.0",
+    "base64url": "^3.0.1",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "winston": "^3.3.3"
   }
 }
