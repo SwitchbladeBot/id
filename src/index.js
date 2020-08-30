@@ -17,7 +17,7 @@ const controller = new DatabaseController()
 logger.info('Connecting to the database...')
 controller.connect()
   .then(() => {
-    logger.log('Database connected!')
+    logger.info('Database connected!')
     loadRoutes({
       database: controller
     })
