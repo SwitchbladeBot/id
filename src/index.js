@@ -12,7 +12,6 @@ const aes256 = require('aes256')
 const cookieEnctryptionKey = process.env.COOKIE_ENCRYPTION_PASSPHRASE
 
 const winston = require('winston')
-const { query, urlencoded } = require('express')
 const logger = winston.createLogger()
 
 const redirectUri = `${process.env.BASE_URL}/callback`
