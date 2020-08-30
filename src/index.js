@@ -35,25 +35,52 @@ app.get('/', (req, res) => {
   res.send('<a href="/login">Authorize</a>')
 })
 
-app.get('/authorize', (req, res) => {
-  if (req.cookies.discord_access_token && req.cookies.discord_refresh_token) {
-    res.json({
-      access_token: aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_access_token),
-      refresh_token: aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_refresh_token)
+app.get('/authorize', async (req, res) => {
+  if (req.headers.authorization) {
+    res.send({
+      ok: true
     })
   } else {
-    res.redirect('/login')
+    if (req.cookies.discord_access_token && req.cookies.discord_refresh_token) {
+      const tokens = {
+        access: aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_access_token),
+        refresh: aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_refresh_token)
+      }
+      const user = await getUser(tokens.access, tokens.refresh)
+      res.json(user)
+    } else {
+      res.redirect(`/login?redirect_to=${process.env.BASE_URL}${req.originalUrl}`)
+    }
   }
 })
 
+function getUser (accessToken, refreshToken) {
+  return axios.get('https://discord.com/api/v6/users/@me', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  }).then(res => res.data)
+}
+
 // User interface where users will be prompted to login and then autorize the app
 app.get('/login', (req, res) => {
+  let state = {}
+
+  if (req.query.redirect_to) {
+    state.redirect_to = req.query.redirect_to
+  }
+
   res.redirect(`https://discord.com/api/oauth2/authorize?${querystring.stringify({
     client_id: process.env.DISCORD_CLIENT_ID,
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: process.env.DISCORD_SCOPES.split(',').join(' ')
+    scope: process.env.DISCORD_SCOPES.split(',').join(' '),
+    state: base64url.encode(JSON.stringify(state))
   })}`)
+})
+
+app.get('/success', (req, res) => {
+  res.send('ayy you\'re logged in')
 })
 
 // The URL Discord will redirect users to after they login
@@ -72,10 +99,25 @@ app.get('/callback', (req, res) => {
       'content-Type': 'application/x-www-form-urlencoded'
     }
   }).then(({ data }) => {
+    let redirectPath = '/success'
+
+    if (req.query.state) {
+      const decoded = JSON.parse(base64url.decode(req.query.state))
+
+      if (decoded.redirect_to) {
+        if (decoded.redirect_to.startsWith(process.env.BASE_URL)) {
+          redirectPath = decoded.redirect_to
+        } else {
+          // Only redirect to the same BASE_URL
+          return res.status(500).send('Bad Request')
+        }
+      }
+    }
+
     res
       .cookie('discord_access_token', aes256.encrypt(cookieEnctryptionKey, data.access_token))
       .cookie('discord_refresh_token', aes256.encrypt(cookieEnctryptionKey, data.refresh_token))
-      .redirect('/authorize')
+      .redirect(redirectPath)
   })
 })
 
