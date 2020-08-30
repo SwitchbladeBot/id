@@ -12,6 +12,7 @@ const aes256 = require('aes256')
 const cookieEnctryptionKey = process.env.COOKIE_ENCRYPTION_PASSPHRASE
 
 const winston = require('winston')
+const { query, urlencoded } = require('express')
 const logger = winston.createLogger()
 
 const redirectUri = `${process.env.BASE_URL}/callback`
@@ -49,7 +50,7 @@ app.get('/authorize', async (req, res) => {
       const user = await getUser(tokens.access, tokens.refresh)
       res.json(user)
     } else {
-      res.redirect(`/login?redirect_to=${process.env.BASE_URL}${req.originalUrl}`)
+      res.redirect(`/login?redirect_to=${querystring.escape(`${process.env.BASE_URL}${req.path}?${querystring.stringify(req.query)}`)}`)
     }
   }
 })
@@ -93,7 +94,6 @@ app.get('/callback', (req, res) => {
     redirect_uri: redirectUri,
     scope: process.env.DISCORD_SCOPES.split(',').join(' ')
   })
-  console.log(body)
   axios.post('https://discord.com/api/oauth2/token', body, {
     headers: {
       'content-Type': 'application/x-www-form-urlencoded'
