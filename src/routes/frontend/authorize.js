@@ -3,6 +3,10 @@ const path = require('path')
 const { supported_scopes: supportedScopes } = require('../../../config.json')
 
 module.exports = ({router}) => {
+  /**
+   * The authorize endpoint, to be accessed from the 3rd party app. This is documented somewhere on the RFC bible.
+   * If user is not authenticated (no cookies), they are redirected to /login
+   */
   router.get('/authorize', async (req, res) => {
     if (req.headers.authorization) {
       res.send({

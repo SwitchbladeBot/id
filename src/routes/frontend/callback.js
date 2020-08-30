@@ -5,7 +5,10 @@ const aes256 = require('aes256')
 const cookieEncryptionKey = process.env.COOKIE_ENCRYPTION_PASSPHRASE
 
 module.exports = ({router, logger}) => {
-  // The URL Discord will redirect users to after they login
+  /**
+   * The callback url from discord OAuth.
+   * After the user connect with Discord OAuth, they are redirected here
+   */
   router.get('/callback', async (req, res) => {
     const redirectUri = `${process.env.BASE_URL}${process.env.DISCORD_CALLBACK_PATH}`
 

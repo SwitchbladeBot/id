@@ -2,7 +2,9 @@ const queryString = require('querystring')
 const base64url = require('base64url')
 
 module.exports = ({router}) => {
-  // User interface where users will be prompted to login and then autorize the app
+  /**
+   * This endpoint is used on the /login endpoint, to get the URL to redirect to for the Discord Login.
+   */
   router.get('/discord_url', (req, res) => {
     const redirectUri = `${process.env.BASE_URL}${process.env.DISCORD_CALLBACK_PATH}`
     let state = {}
