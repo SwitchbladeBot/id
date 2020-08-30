@@ -1,133 +1,51 @@
 const express = require('express')
-const app = express()
-
+const fs = require('fs')
+const {setupLogger} = require('./utils')
 const cookieParser = require('cookie-parser')
+const DatabaseController = require('./database/DatabaseController')
+const {promisify} = require('util')
+const readDirAsync = promisify(fs.readdir)
+
+const app = express()
+const locale = require('./locales/en-US.json')
+const logger = setupLogger()
+
 app.use(cookieParser())
 
-const base64url = require('base64url')
-const axios = require('axios').default
-const querystring = require('querystring')
 
-const aes256 = require('aes256')
-const cookieEnctryptionKey = process.env.COOKIE_ENCRYPTION_PASSPHRASE
-
-const winston = require('winston')
-const logger = winston.createLogger()
-
-const redirectUri = `${process.env.BASE_URL}/callback`
-
-const supportedScopes = [
-  'music.playback',
-  'music.playlists_read',
-  'music.playlists_write'
-]
-
-const locale = require('./locales/en-US.json')
-
-if (process.env.NODE_ENV === 'production') {
-  logger.add(new winston.transports.Console({ level: process.env.LOGGING_LEVEL || 'silly' }))
-} else {
-  logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.timestamp(),
-      winston.format.printf(
-        info => `${info.timestamp} ${info.level}${info.label ? ` [${info.label || ''}]` : ''}: ${info.message}`
-      )
-    ),
-    level: process.env.LOGGING_LEVEL || 'silly'
-  }))
-}
-
-app.get('/', (req, res) => {
-  res.send('<a href="/login">Authorize</a>')
+const controller = new DatabaseController()
+controller.connect().then(() => {
+  loadRoutes({
+    database: controller
+  })
 })
 
-app.get('/authorize', async (req, res) => {
-  if (req.headers.authorization) {
-    res.send({
-      ok: true
+async function loadRoutes(ctx) {
+  logger.info('Loading routes...')
+
+  app.use(await loadPath('frontend', ctx))
+  app.use('/oauth2', await loadPath('api', ctx))
+
+  logger.info('API Routes ready')
+}
+
+async function loadPath(path, ctx) {
+  path = `./src/routes/${path}`
+  const files = await readDirAsync(path)
+  const router = express.Router()
+  for (let file of files) {
+    const route = require(`.${path}/${file}`)
+    route({
+      router,
+      logger,
+      locale,
+      ...ctx
     })
-  } else {
-    if (req.cookies.discord_access_token && req.cookies.discord_refresh_token) {
-      if (!req.query.scope) return res.status(500).send('Bad Request')
-      if (!req.query.scope.split(' ').every(s => supportedScopes.includes(s))) return res.status(500).send('Invalid scopes')
-
-      const accessToken = aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_access_token)
-      const refreshToken = aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_refresh_token)
-      const user = await getUser(accessToken, refreshToken)
-      res.send(`Hello, <b>${user.username}#${user.discriminator}</b><br><br>This app wants to:<ul>${req.query.scope.split(' ').map(s => `<li>${locale.scopes[s]}</li>`).join('')}</ul>`)
-    } else {
-      res.redirect(`/login?redirect_to=${querystring.escape(`${process.env.BASE_URL}${req.path}?${querystring.stringify(req.query)}`)}`)
-    }
   }
-})
 
-function getUser (accessToken, refreshToken) {
-  return axios.get('https://discord.com/api/v6/users/@me', {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
-  }).then(res => res.data)
+  return router
 }
 
-// User interface where users will be prompted to login and then autorize the app
-app.get('/login', (req, res) => {
-  let state = {}
-
-  if (req.query.redirect_to) {
-    state.redirect_to = req.query.redirect_to
-  }
-
-  res.redirect(`https://discord.com/api/oauth2/authorize?${querystring.stringify({
-    client_id: process.env.DISCORD_CLIENT_ID,
-    redirect_uri: redirectUri,
-    response_type: 'code',
-    scope: process.env.DISCORD_SCOPES.split(',').join(' '),
-    state: base64url.encode(JSON.stringify(state))
-  })}`)
-})
-
-app.get('/success', (req, res) => {
-  res.send('ayy you\'re logged in')
-})
-
-// The URL Discord will redirect users to after they login
-app.get('/callback', (req, res) => {
-  const body = querystring.stringify({
-    client_id: process.env.DISCORD_CLIENT_ID,
-    client_secret: process.env.DISCORD_CLIENT_SECRET,
-    grant_type: 'authorization_code',
-    code: req.query.code,
-    redirect_uri: redirectUri,
-    scope: process.env.DISCORD_SCOPES.split(',').join(' ')
-  })
-  axios.post('https://discord.com/api/oauth2/token', body, {
-    headers: {
-      'content-Type': 'application/x-www-form-urlencoded'
-    }
-  }).then(({ data }) => {
-    let redirectPath = '/success'
-
-    if (req.query.state) {
-      const decoded = JSON.parse(base64url.decode(req.query.state))
-
-      if (decoded.redirect_to) {
-        if (decoded.redirect_to.startsWith(process.env.BASE_URL)) {
-          redirectPath = decoded.redirect_to
-        } else {
-          // Only redirect to the same BASE_URL
-          return res.status(500).send('Bad Request')
-        }
-      }
-    }
-
-    res
-      .cookie('discord_access_token', aes256.encrypt(cookieEnctryptionKey, data.access_token))
-      .cookie('discord_refresh_token', aes256.encrypt(cookieEnctryptionKey, data.refresh_token))
-      .redirect(redirectPath)
-  })
-})
 
 // Token Introspection Endpoint (RFC 7662 https://tools.ietf.org/html/rfc7662)
 app.get('/oauth2/token_information', (req, res) => {
@@ -147,3 +65,5 @@ const port = process.env.PORT || 3000
 app.listen(port, () => {
   logger.info(`Listening at http://localhost:${port}`)
 })
+
+
