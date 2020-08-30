@@ -16,6 +16,14 @@ const logger = winston.createLogger()
 
 const redirectUri = `${process.env.BASE_URL}/callback`
 
+const supportedScopes = [
+  'music.playback',
+  'music.playlists_read',
+  'music.playlists_write'
+]
+
+const locale = require('./locales/en-US.json')
+
 if (process.env.NODE_ENV === 'production') {
   logger.add(new winston.transports.Console({ level: process.env.LOGGING_LEVEL || 'silly' }))
 } else {
@@ -42,12 +50,13 @@ app.get('/authorize', async (req, res) => {
     })
   } else {
     if (req.cookies.discord_access_token && req.cookies.discord_refresh_token) {
-      const tokens = {
-        access: aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_access_token),
-        refresh: aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_refresh_token)
-      }
-      const user = await getUser(tokens.access, tokens.refresh)
-      res.json(user)
+      if (!req.query.scope) return res.status(500).send('Bad Request')
+      if (!req.query.scope.split(' ').every(s => supportedScopes.includes(s))) return res.status(500).send('Invalid scopes')
+
+      const accessToken = aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_access_token)
+      const refreshToken = aes256.decrypt(cookieEnctryptionKey, req.cookies.discord_refresh_token)
+      const user = await getUser(accessToken, refreshToken)
+      res.send(`Hello, <b>${user.username}#${user.discriminator}</b><br><br>This app wants to:<ul>${req.query.scope.split(' ').map(s => `<li>${locale.scopes[s]}</li>`).join('')}</ul>`)
     } else {
       res.redirect(`/login?redirect_to=${querystring.escape(`${process.env.BASE_URL}${req.path}?${querystring.stringify(req.query)}`)}`)
     }
