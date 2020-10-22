@@ -1,7 +1,0 @@
-{
-  "supported_scopes": [
-    "music.playback",
-    "music.playlists_read",
-    "music.playlists_write"
-  ]
-}

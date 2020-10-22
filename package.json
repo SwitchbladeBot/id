@@ -1,35 +1,22 @@
 {
   "name": "id",
   "version": "1.0.0",
-  "description": "Switchblade authorization micro-service using OAuth2",
+  "description": "Switchblade's oAuth2 server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec node -r dotenv/config src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SwitchbladeBot/id.git"
   },
-  "author": "Switchblade Team",
-  "license": "ISC",
+  "author": "Pedro Fracassi",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/SwitchbladeBot/id/issues"
   },
   "homepage": "https://github.com/SwitchbladeBot/id#readme",
-  "devDependencies": {
-    "dotenv": "^8.2.0",
-    "jest": "^26.4.2",
-    "nodemon": "^2.0.4",
-    "standard": "^14.3.4"
-  },
   "dependencies": {
-    "aes256": "^1.0.4",
-    "axios": "^0.20.0",
-    "base64url": "^3.0.1",
-    "cookie-parser": "^1.4.5",
-    "express": "^4.17.1",
-    "mongoose": "^5.10.2",
-    "winston": "^3.3.3"
+    "express": "^4.17.1"
   }
 }
