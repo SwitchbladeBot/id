@@ -1,12 +1,13 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-app.use(express.static(path.join(__dirname, 'build')));
+const express = require('express')
+const path = require('path')
+const app = express()
 
-app.get('/ping', function (req, res) {
- return res.send('pong');
+app.get('/hello', function (req, res) {
+ return res.json({ text: 'aaaaaaaaaaaaaaaaaaaaa' })
 });
 
-app.use(express.static('frontend/build'));
+app.use('/', express.static(path.join(__dirname, 'frontend', 'build')))
 
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 8080)
+
+console.log('Listening on port 8080!')

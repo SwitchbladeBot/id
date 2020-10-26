@@ -12,3 +12,9 @@ Switchblade's OAuth 2.0 server
   > Needed for mobile apps and static websites (places where we can't store the client secret safely)
 - [ ] **Token Revocation** (RFC 7009) https://tools.ietf.org/html/rfc7009
   > Lets users revoke tokens and unauthorize apps
+
+## Development Environment Setup
+
+0. Clone this repository
+1. Run `npm install`
+2. Run `npm run dev` to start both the frontend and backend servers
