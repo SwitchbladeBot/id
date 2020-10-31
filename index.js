@@ -44,8 +44,7 @@ app.get('/api/authorize', (req, res) => {
     application: {
       image: 'https://cdn-2.musicorumapp.com/apps/5YDasZrzHFXwEKKPr85n74rSVPDmqe4N.png',
       name: 'Musicorum',
-      verified: true,
-      scopes: ['playback_control', 'playlists_modify']
+      verified: true
     },
     user: {
       image: 'https://cdn.discordapp.com/avatars/205873263258107905/a_df9b77a6ab32c92c03184b4156fc86ba.gif',
