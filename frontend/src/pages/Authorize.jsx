@@ -4,6 +4,7 @@ import { Box, Centered, CenterText, RectangularSkeleton } from '../common'
 import Avatar from '../components/Avatar'
 import Button from '../components/Button'
 import styled from 'styled-components'
+import axios from 'axios'
 
 const Avatars = styled.div`
   display: flex;
@@ -21,10 +22,16 @@ const Authorize = () => {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    fetch('/api/authorize')
-      .then(r => r.json())
+    axios.get('/api/authorize')
+      .then(r => r.data)
       .then(r => setData(r))
   }, [])
+
+  function authorizeApplication (authorize) {
+    axios.post('/api/authorize', { authorize }).then(r => r.data).then(r => {
+      window.location.href = r.location
+    })
+  }
 
   return (
     <Scaffold>
@@ -57,14 +64,13 @@ const Authorize = () => {
         <Button
           filled
           disabled={!data}
-          onClick={() => alert('confirmado!')}
+          onClick={() => authorizeApplication(true)}
         >
           Authorize
         </Button>
         <Button
-
           disabled={!data}
-          onClick={() => {}}
+          onClick={() => authorizeApplication(false)}
         >
           Cancel
         </Button>

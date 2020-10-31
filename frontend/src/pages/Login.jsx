@@ -4,12 +4,14 @@ import { Box, Centered, CenterText, RectangularSkeleton } from '../common'
 import Avatar from '../components/Avatar'
 import Button from '../components/Button'
 
+import axios from 'axios'
+
 const Login = ({ history }) => {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    fetch('/api/login')
-      .then(r => r.json())
+    axios.get('/api/login')
+      .then(r => r.data)
       .then(r => setData(r))
   }, [])
 
@@ -26,7 +28,7 @@ const Login = ({ history }) => {
           {
             data
               ? <CenterText>
-                Please login to authorize <b>{data.application.name}</b> to access Switchblade on your behalf.
+                Login to authorize <b>{data.application.name}</b> to access Switchblade on your behalf.
               </CenterText>
               : <RectangularSkeleton width={210} height={18}/>
           }
@@ -36,7 +38,7 @@ const Login = ({ history }) => {
         <Button
           filled
           disabled={!data}
-          onClick={() => window.location.href = '/api/callback'}
+          onClick={() => window.location.href = data.login_url}
         >
           Login with discord
         </Button>
