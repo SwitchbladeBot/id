@@ -22,7 +22,7 @@ const Authorize = () => {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    axios.get('/api/authorize')
+    axios.get('/api/authorize' + window.location.search)
       .then(r => r.data)
       .then(r => {
         if (r.location) return window.location.href = r.location

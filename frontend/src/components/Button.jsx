@@ -11,9 +11,9 @@ const ButtonWrapper = styled.button`
   background-color: ${p => p.filled ? BLURPLE : 'transparent'};
   color: ${p => p.filled ? LIGHT_BLURPLE : 'black'};
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   outline: none;
   border: none;

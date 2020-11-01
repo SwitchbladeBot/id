@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import Scaffold from '../components/Scaffold'
-import { Box, Centered, CenterText, RectangularSkeleton } from '../common'
+import { Box, Centered, CenterText, RectangularSkeleton, SmallCenterText } from '../common'
 import Avatar from '../components/Avatar'
 import Button from '../components/Button'
 
 import axios from 'axios'
+import { useCookies } from 'react-cookie'
 
 const Login = ({ history }) => {
   const [data, setData] = useState(null)
+  const [ cookies, setCookie, removeCookie ] = useCookies([ 'session' ])
 
   useEffect(() => {
+    removeCookie('session')
     axios.get('/api/login')
       .then(r => r.data)
       .then(r => setData(r))
@@ -17,7 +20,7 @@ const Login = ({ history }) => {
 
   return (
     <Scaffold>
-      <Box mt={24 * 3} mb={24 * 3}>
+      <Box mt={24 * 2} mb={24 * 2}>
         <Centered column>
           <Box mb={24}>
             <Avatar
@@ -40,7 +43,7 @@ const Login = ({ history }) => {
           disabled={!data}
           onClick={() => window.location.href = data.login_url}
         >
-          Login with discord
+          Login with Discord
         </Button>
       </Box>
     </Scaffold>

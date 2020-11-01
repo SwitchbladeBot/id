@@ -30,8 +30,8 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 const application = {
-  image: 'https://play-lh.googleusercontent.com/ORzWxi-sIo_hCgSa6uzVvBUE4osKUqRVzHnniUUxA2WXD7BnZ95BNVpWFLUTKRyJRdU',
-  name: 'Google Assistant',
+  image: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Amazon_Alexa_App_Logo.png',
+  name: 'Alexa',
   verified: true
 }
 
@@ -46,6 +46,10 @@ app.use(async (req, res, next) => {
   const user = await discord.getUser(accessTokenResponse.access_token)
   req.user = user
   next()
+})
+
+app.get('/', (req, res) => {
+  res.redirect('/login')
 })
 
 app.get('/api/login', (req, res) => {
@@ -96,3 +100,4 @@ app.post('/api/authorize', async (req, res) => {
 })
 
 app.use('/', express.static(path.join(__dirname, 'frontend', 'build')))
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html')))
