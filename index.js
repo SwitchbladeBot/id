@@ -1,23 +1,20 @@
-const express = require('express')
 const path = require('path')
+
+const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 
 const { MongoClient } = require('mongodb')
 const client = new MongoClient(process.env.MONGODB_URI, { useUnifiedTopology: true })
+const cryptoRandomString = require('crypto-random-string')
 
-const queryString = require('querystring')
 const DiscordAPI = require('./DiscordAPI')
-
-let database
-
 const discord = new DiscordAPI()
 
-const aes256 = require('aes256')
-const cookieEncryptionKey = process.env.COOKIE_ENCRYPTION_KEY
-const crypto = require('crypto')
+const base64url = require('base64url')
 
-const cookieParser = require('cookie-parser')
+let database
 
 client.connect().then(() => {
   database = client.db('id')
@@ -60,9 +57,20 @@ app.get('/api/login', (req, res) => {
 })
 
 app.get('/api/callback', async (req, res) => {
+  let redirectPath = '/authorize'
+
+  if (req.query.state) {
+    const decoded = JSON.parse(base64url.decode(req.query.state))
+    if (decoded.redirect_to) {
+        redirectPath = decoded.redirect_to
+    } else {
+      return res.status(500).send('Bad request, invalid state!')
+    }
+  }
+
   const response = await discord.exchangeCode(req.query.code)
   const user = await discord.getUser(response.access_token)
-  const sessionId = crypto.randomBytes(32).toString('hex')
+  const sessionId = cryptoRandomString({ length: 64, type: 'alphanumeric' })
   database.collection('sessions').insertOne({
     _id: sessionId,
     user_id: user.id,
@@ -78,13 +86,14 @@ app.get('/api/callback', async (req, res) => {
   }, {
     upsert: true
   })
+
   res.cookie('session', sessionId, {
     maxAge: 1000000000000000
-  }).redirect('/authorize')
+  }).redirect(redirectPath)
 })
 
 app.get('/api/authorize', async (req, res) => {
-  if (!req.session) return res.json({ location: discord.getAuthorizeUrl() })
+  if (!req.session) return res.json({ location: discord.getAuthorizeUrl(req.query) })
   res.json({
     application,
     user: req.user
@@ -93,7 +102,7 @@ app.get('/api/authorize', async (req, res) => {
 
 app.post('/api/authorize', async (req, res) => {
   if (req.body.authorize) {
-    res.json({ location: 'http://localhost:3000?code=tgr8uhvb94t65hb8043j58906jnko5e6m' })
+    res.json({ location: `http://localhost:3000?code=${cryptoRandomString({ length: 32, type: 'alphanumeric' })}` })
   } else {
     res.json({ location: 'http://localhost:3000?error=invalid_grant' })
   }

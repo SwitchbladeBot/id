@@ -1,4 +1,5 @@
 const axios = require('axios').default
+const { default: base64url } = require('base64url')
 const queryString = require('querystring')
 
 module.exports = class DiscordAPI {
@@ -15,12 +16,13 @@ module.exports = class DiscordAPI {
     })
   }
 
-  getAuthorizeUrl () {
+  getAuthorizeUrl (query) {
     return `${this.discordBaseUrl}/oauth2/authorize?${queryString.stringify({
       client_id: this.clientId,
       redirect_uri: `${this.serverBaseUrl}/api/callback`,
       response_type: 'code',
-      scope: this.scopes.join(' ')
+      scope: this.scopes.join(' '),
+      state: query ? base64url.encode(JSON.stringify({ redirect_to: `/authorize?${queryString.encode(query)}` })) : null
     })}`
   }
 

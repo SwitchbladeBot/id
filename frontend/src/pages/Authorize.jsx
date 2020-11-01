@@ -26,6 +26,7 @@ const Authorize = () => {
       .then(r => r.data)
       .then(r => {
         if (r.location) return window.location.href = r.location
+        if (r.error) return alert(r.error)
         setData(r)
       })
   }, [])
