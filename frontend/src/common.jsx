@@ -35,6 +35,10 @@ export const CenterText = styled.span`
   font-size: 20px;
 `
 
+export const SmallCenterText = styled(CenterText)`
+  font-size: 14px;
+`
+
 export const Box = styled.div`
   margin-bottom: ${p => p.mb || 0}px;
   margin-top: ${p => p.mt || 0}px;

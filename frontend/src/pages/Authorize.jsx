@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Scaffold from '../components/Scaffold'
-import { Box, Centered, CenterText, RectangularSkeleton } from '../common'
+import { Box, Centered, CenterText, RectangularSkeleton, SmallCenterText } from '../common'
 import Avatar from '../components/Avatar'
 import Button from '../components/Button'
 import styled from 'styled-components'
@@ -24,11 +24,14 @@ const Authorize = () => {
   useEffect(() => {
     axios.get('/api/authorize')
       .then(r => r.data)
-      .then(r => setData(r))
+      .then(r => {
+        if (r.location) return window.location.href = r.location
+        setData(r)
+      })
   }, [])
 
   function authorizeApplication (authorize) {
-    axios.post('/api/authorize', { authorize }).then(r => r.data).then(r => {
+    axios.post('/api/authorize', { authorize }, { withCredentials: true }).then(r => r.data).then(r => {
       window.location.href = r.location
     })
   }
@@ -40,7 +43,7 @@ const Authorize = () => {
           <Box mb={24}>
             <Avatars>
               <Avatar
-                src={data ? data.user.image : null}
+                src={data ? `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.jpeg` : null}
               />
               <Dots>
                 - - - -
@@ -53,9 +56,19 @@ const Authorize = () => {
           </Box>
           {
             data
+              ? <SmallCenterText>
+                  Logged in as <b>{data.user.username}#{data.user.discriminator}</b>. <a href="/login">Not you?</a>
+                </SmallCenterText>
+              : <RectangularSkeleton width={270} height={18}/>
+          }
+          <br/>
+          {
+            data
               ? <CenterText>
-                <b>{data.application.name}</b> wants to do these actions on your behalf
-              </CenterText>
+                  <b>{data.application.name}</b>
+                  <br/>
+                  wants to access your account
+                </CenterText>
               : <RectangularSkeleton width={270} height={18}/>
           }
         </Centered>
