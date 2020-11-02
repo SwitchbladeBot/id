@@ -20,7 +20,7 @@ const Dots = styled.div`
 
 const scopeNames = {
   identify: 'Access your username and avatar',
-  'music.playback': 'Contro playback in voice channels you\'re in',
+  'music.playback': 'Control playback in voice channels you\'re in',
   'music.playlists': 'Access and modify your playlists'
 }
 
