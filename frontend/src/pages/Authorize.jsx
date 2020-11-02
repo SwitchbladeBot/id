@@ -18,6 +18,12 @@ const Dots = styled.div`
   align-items: center;
 `
 
+const scopeNames = {
+  identify: 'Access your username and avatar',
+  'music.playback': 'Contro playback in voice channels you\'re in',
+  'music.playlists': 'Access and modify your playlists'
+}
+
 const Authorize = () => {
   const [data, setData] = useState(null)
 
@@ -76,7 +82,7 @@ const Authorize = () => {
           <br/>
           
             {
-              data ? <ul>{new URLSearchParams(window.location.search).get('scope').split(' ').map(s => <li>{s}</li>)}</ul> : <RectangularSkeleton width={270} height={18}/>
+              data ? <ul>{new URLSearchParams(window.location.search).get('scope').split(' ').map(s => <li>{scopeNames[s] || s}</li>)}</ul> : <RectangularSkeleton width={270} height={18}/>
             }
           
         </Centered>
