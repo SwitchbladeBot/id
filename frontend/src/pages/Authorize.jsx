@@ -32,8 +32,9 @@ const Authorize = () => {
   }, [])
 
   function authorizeApplication (authorize) {
-    axios.post('/api/authorize', { authorize }, { withCredentials: true }).then(r => r.data).then(r => {
-      window.location.href = r.location
+    axios.post('/api/authorize' + window.location.search, { authorize }, { withCredentials: true }).then(r => r.data).then(r => {
+      if (r.location) return window.location.href = r.location
+      if (r.error) return alert(r.error)
     })
   }
 
@@ -72,6 +73,12 @@ const Authorize = () => {
                 </CenterText>
               : <RectangularSkeleton width={270} height={18}/>
           }
+          <br/>
+          
+            {
+              data ? <ul>{new URLSearchParams(window.location.search).get('scope').split(' ').map(s => <li>{s}</li>)}</ul> : <RectangularSkeleton width={270} height={18}/>
+            }
+          
         </Centered>
       </Box>
       <Box pb={16} fullWidth>

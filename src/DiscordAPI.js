@@ -43,6 +43,7 @@ module.exports = class DiscordAPI {
     }).then(res => res.data)
   }
 
+  // TODO: Attempt to refresh access tokens when this request fails
   getUser (accessToken) {
     return this.axios.get('/users/@me', {
       headers: {

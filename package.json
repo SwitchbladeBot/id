@@ -4,7 +4,7 @@
   "description": "Switchblade's OAuth2 server",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently --prefix-colors magenta,cyan --names Backend,Frontend \"nodemon --ignore frontend -r dotenv/config index.js\" \"cd frontend && npm start\"",
+    "dev": "concurrently --prefix-colors magenta,cyan --names Backend,Frontend \"nodemon --ignore frontend -r dotenv/config src/index.js\" \"cd frontend && npm start\"",
     "postinstall": "cd frontend && npm install"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "crypto-random-string": "^3.3.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.2",
+    "morgan": "^1.10.0",
     "querystring": "^0.2.0"
   },
   "devDependencies": {
