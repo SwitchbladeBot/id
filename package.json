@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "concurrently --prefix-colors magenta,cyan --names Backend,Frontend \"nodemon --ignore frontend -r dotenv/config src/index.js\" \"cd frontend && npm start\"",
     "postinstall": "cd frontend && npm install",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm run build",
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
