@@ -195,7 +195,7 @@ app.get('/api/token_info', async (req, res) => {
     active: true,
     scope: accessToken.scope.join(' '),
     client_id: accessToken.client_id,
-    username: accessToken.user_id,
+    sub: accessToken.user_id,
     exp: accessToken.expires_at
   })
 })
