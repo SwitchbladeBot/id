@@ -1,0 +1,17 @@
+{
+  "authorize": {
+    "access": "deseja acessar sua conta",
+    "scopesTitle": "{{name}} poderá",
+    "authorize": "Autorizar",
+    "cancel": "Cancelar"
+  },
+  "scopes": {
+    "identify": "Acessar seu usuário e avatar",
+    "music.playback": "Controlar sua música nos canais que você está",
+    "music.playlists": "Acessar e modificar suas playlists"
+  },
+  "error": {
+    "title": "Um erro ocorreu!",
+    "button": "Voltar"
+  }
+}

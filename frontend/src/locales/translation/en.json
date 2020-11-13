@@ -1,0 +1,17 @@
+{
+  "authorize": {
+    "access": "wants to access your account",
+    "scopesTitle": "{{name}} will be able to",
+    "authorize": "Authorize",
+    "cancel": "Cancel"
+  },
+  "scopes": {
+    "identify": "Access your username and avatar",
+    "music.playback": "Control playback in voice channels you're in",
+    "music.playlists": "Access and modify your playlists"
+  },
+  "error": {
+    "title": "An error occurred!",
+    "button": "Go back"
+  }
+}

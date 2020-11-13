@@ -7,6 +7,16 @@ body {
     background-color: #F9FAFF;
 }
 
+a {
+    color: #5376b8;
+    text-decoration: none;
+}
+
+a:hover {
+    opacity: .9;
+    text-decoration: underline;
+}
+
 @keyframes skeleton {
     0% {
         background-color: #dcdcdc;
@@ -18,5 +28,30 @@ body {
 
     100% {
         background-color: #dcdcdc;
+    }
+}
+
+@keyframes handshakeIn {
+    0% {
+        transform: scale(.6);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes handshakeAccept {
+    0% {
+        transform: translateY(0px);
+    }
+    35% {
+        transform: translateY(30px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px);
+        opacity: 0;
     }
 }

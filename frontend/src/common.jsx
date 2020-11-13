@@ -1,15 +1,14 @@
 import styled from 'styled-components'
 import React from 'react'
+import {ReactComponent as SwitchbladeLogo} from './assets/logo.svg'
 
 const LogoWrapper = styled.span`
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 900;
-  font-style: italic;
-  font-size: 24px;
   padding: ${p => p.padding || 34}px;
 `
 
-export const Logo = (props) => <LogoWrapper {...props}>SWITCHBLADE</LogoWrapper>
+export const Logo = (props) => <LogoWrapper {...props}>
+  <SwitchbladeLogo />
+</LogoWrapper>
 
 export const RectangularSkeleton = styled.div`
   background: #d7d7d7;
@@ -37,6 +36,14 @@ export const CenterText = styled.span`
 
 export const SmallCenterText = styled(CenterText)`
   font-size: 14px;
+`
+
+export const AlmostSmallCenterText = styled(CenterText)`
+  font-size: 16px;
+`
+
+export const BigText = styled.span`
+  font-size: 24px;
 `
 
 export const Box = styled.div`

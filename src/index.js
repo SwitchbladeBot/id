@@ -7,7 +7,6 @@ const cookieParser = require('cookie-parser')
 
 const { MongoClient } = require('mongodb')
 const client = new MongoClient(process.env.MONGODB_URI, { useUnifiedTopology: true })
-const cryptoRandomString = require('crypto-random-string')
 
 const DiscordAPI = require('./DiscordAPI')
 const discord = new DiscordAPI()
@@ -24,11 +23,6 @@ const validScopes = [
   'identify',
   'music.playback',
   'music.playlists'
-]
-
-const validResponseTypes = [
-  'code',
-  'token'
 ]
 
 client.connect().then(() => {
@@ -52,8 +46,7 @@ app.use(async (req, res, next) => {
   const discordTokens = await manager.getDiscordTokens(session.user_id)
   req.session = session
   req.discordTokens = discordTokens
-  const user = await discord.getUser(discordTokens.access_token)
-  req.user = user
+  req.user = await discord.getUser(discordTokens.access_token)
   next()
 })
 

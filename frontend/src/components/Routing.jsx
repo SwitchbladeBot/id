@@ -7,7 +7,7 @@ const Routing = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/login" component={Login} exact />
+        {/*<Route path="/login" component={Login} exact />*/}
         <Route path="/authorize" component={Authorize} exact />
       </Switch>
     </BrowserRouter>

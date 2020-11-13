@@ -7,18 +7,24 @@ import {ReactComponent as Verified} from '../assets/verified.svg'
 const badgeSize = 30
 const badgeGap = 14
 
+const AvatarWrapper = styled.div`
+  width: ${AVATAR_SIZE + 16}px;
+  display: flex;
+  justify-content: center;
+`
+
 const Image = styled.img`
   border-radius: 50%;
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
   position: relative;
-  left: ${badgeSize / 2}px;
+  //left: ${badgeSize / 2}px;
 `
 
 const VerifiedBadge = styled(Verified)`
   width: ${badgeSize}px;
   height: ${badgeSize}px;
-  position: relative;
+  position: absolute;
   right: ${badgeGap / 2}px;
   bottom: ${badgeGap}px;
 `
@@ -26,14 +32,14 @@ const VerifiedBadge = styled(Verified)`
 const Avatar = ({ src, verified, alt }) => {
   return src
     ? (
-      <div>
-        <Image src={src} alt={alt || 'Avatar image'}/>
-        {
-          verified
-            ? <VerifiedBadge />
-            : null
-        }
-      </div>
+      <AvatarWrapper>
+          <Image src={src} alt={alt || 'Avatar image'}/>
+          {
+            verified
+              ? <VerifiedBadge />
+              : null
+          }
+      </AvatarWrapper>
     )
     : <CircularSkeleton width={AVATAR_SIZE} height={AVATAR_SIZE}/>
 }
